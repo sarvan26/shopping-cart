@@ -1,0 +1,24 @@
+.addToCartBtn{
+visibility: hidden;
+font-size: 12px;
+
+}
+.addToCartBtn1{
+    position: relative;
+    left:50px;
+    font-size: 12px !important;
+}
+.itemCoutnBtn{
+    visibility: hidden;
+}
+.itemCoutnBtn1{
+position: relative;
+right:45px
+}
+.countText{
+    width: 200px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 12px !important;
+}
