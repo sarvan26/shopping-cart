@@ -5,7 +5,6 @@ const initialState = {
 }
 
 export default function rootReducer(state = initialState, action) {
-   console.log(action.data,"reducer",action.type,state,{...state})
    console.log(state.totalItemCount)
     switch (action.type) {
         case 'TERMSCONDITION':
