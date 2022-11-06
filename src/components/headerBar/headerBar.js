@@ -41,10 +41,6 @@ export default function HeaderBar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const handleShoppingCart=()=>{
-    navigate("/cart")
-    }
-
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -69,7 +65,10 @@ export default function HeaderBar() {
   );
 
   const mobileMenuId = 'primary-search-account-menu-mobile';
+  // const cart = useSelector(state=>state.cart)
+  const cart = useSelector(state => state.cart)
 
+  console.log(cart,"=======cart========")
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" style={{backgroundColor:'#19bcd2'}}>
@@ -90,8 +89,8 @@ export default function HeaderBar() {
               aria-label="show 17 new notifications"
               color="inherit"
             >
-              <Badge badgeContent={totalItemCount} color="error">
-                <ShoppingCartIcon onClick={handleShoppingCart} />
+              <Badge badgeContent={cart.length} color="error">
+                <ShoppingCartIcon onClick={()=>navigate("/cart")} />
               </Badge>
             </IconButton>
             <IconButton

@@ -8,43 +8,47 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Typography from '@mui/material/Typography';
 import {useSelector,useDispatch} from "react-redux"
 import {useState,useEffect} from "react"
+import { useNavigate  } from 'react-router-dom';
 import './productCard.css'
+import { PanTool } from '@mui/icons-material';
 
 export default function ProductCard(props) {
     const dispatch=useDispatch()
-    const {data,listItems}=props;
-  
-    const addToCartClick=(item)=>{
-        let itemCount=0;
-        // item.count++;
-        listItems.map(i=>{
-            if(item.id==i.id)
-             {
-                 i.count++;
-                }
-                
-                })
-             
-                listItems.map(i=>itemCount+=i.count)
-                console.log(itemCount,"welcome",listItems)
+    const cart = useSelector(state => state.cart)
+    const navigate=useNavigate();
 
-        dispatch({type:"TOTAL_ITEM",data:listItems})
+    let {data,listItems}=props;
+
+    const addToCartClick = (item) => {
+        item.count = 1;
+        let u = [...cart,item]
+        console.log(u,"============u=============")
+        dispatch({ type: "ADD_CART", cart: u })
         // dispatch({type:"TOTAL_ITEM_COUNT",count:itemCount})
 
     }
 
-    const removeItemFromCartClick=(item)=>{
-        let itemCount=0;
-        listItems.map(i=>{
-            if(item.id==i.id) i.count--;
-            })
-            listItems.map(i=>itemCount+=i.count)
-
-        dispatch({type:"TOTAL_ITEM",data:listItems})
-        dispatch({type:"TOTAL_ITEM_COUNT",count:itemCount})
-
+    const updateQuantity = (item,quantity) =>{
+        let copyItem = Object.assign({},item);
+        copyItem.count = quantity;
+        
+        const updatedArr = cart.map(i => {
+            if (item.id == i.id) {
+                console.log(copyItem,"=========copyitem========")
+                return copyItem;
+            }
+            return i;
+        })
+        dispatch({ type: "ADD_CART", cart: updatedArr})
     }
 
+    const removeItemFromCartClick=(item)=>{
+        const updatedArr = cart.filter(i => i.id!=item.id)
+        dispatch({ type: "ADD_CART", cart: updatedArr})
+    }
+
+    const cartData = useSelector(state => state.cart)
+    const isProductAddedtoCart = cartData.some(item=>item.id===data.id)
     
     return (
         <Card  sx={{ maxWidth: 230 }}>
@@ -64,13 +68,20 @@ export default function ProductCard(props) {
                    <b>Rs {data.price}</b> 
                 </Typography>
             </CardContent>
-            <CardActions>   
-                <Button onClick={()=>addToCartClick(data)} variant="contained"  className={!data.count?"addToCartBtn1":"addToCartBtn"} size="small">Add to cart</Button>
-                <ButtonGroup  className={!data.count?"itemCoutnBtn":"itemCoutnBtn1"} variant="contained" aria-label="outlined primary button group">
-                    <Button onClick={()=>addToCartClick(data)}>+</Button>
-                    <Typography  style={{width:'25px',marginTop:'4px'}}>{data.count}</Typography>
-                    <Button onClick={()=>removeItemFromCartClick(data)}>-</Button>
-                </ButtonGroup>
+            <CardActions>  
+                {!props.isCartPage ? (
+                    <div>{!isProductAddedtoCart ? (
+                        <Button onClick={() => addToCartClick(data)} variant="contained" className={ "addToCartBtn1"} size="small">Add to cart</Button>
+                    ) : <Button onClick={() => navigate("/cart")} variant="contained" className={"addToCartBtn1"} size="small">Go to cart</Button>
+                    }</div>
+                ) : (
+                    <ButtonGroup className={"itemCoutnBtn1"} variant="contained" aria-label="outlined primary button group">
+                        <Button onClick={() => updateQuantity(data,data.count+1)}>+</Button>
+                        <Typography style={{ width: '25px', marginTop: '4px' }}>{data.count}</Typography>
+                        <Button disabled={data.count===0&&true} onClick={() => updateQuantity(data,data.count-1)}>-</Button>
+                        <Button onClick={()=>removeItemFromCartClick(data)}>Remove</Button>
+                    </ButtonGroup>
+                )} 
             </CardActions>
             
         </Card>
